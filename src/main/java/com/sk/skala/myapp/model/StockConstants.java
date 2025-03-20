@@ -3,7 +3,7 @@ package com.sk.skala.myapp.model;
 import lombok.experimental.UtilityClass;
 
 /**
- * ✅ 상수 클래스로서의 역할을 명확하게 정의
+ * 상수 클래스로서의 역할을 명확하게 정의
  * - `@UtilityClass`를 사용하여 생성자 자동 차단
  * - JPA 및 파일 처리에서 사용할 상수 값들을 중앙 관리
  */

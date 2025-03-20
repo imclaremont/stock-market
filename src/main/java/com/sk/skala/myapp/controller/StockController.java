@@ -13,7 +13,7 @@ import java.util.List;
 
 @Tag(name = "Stock API", description = "주식 관리 API")
 @RestController
-@RequestMapping("/api/v1/stocks") // ✅ API 버전 추가 (v1)
+@RequestMapping("/api/v1/stocks")
 @RequiredArgsConstructor
 public class StockController {
 
@@ -46,13 +46,13 @@ public class StockController {
     @Operation(summary = "주식 정보 수정", description = "기존 주식 정보를 수정합니다.")
     @PutMapping("/{stockId}")
     public ResponseEntity<Stock> updateStock(@PathVariable Long stockId, @RequestBody Stock updatedStock) {
-        return ResponseEntity.ok(stockService.updateStock(stockId, updatedStock));  // ✅ StockService에서 updateStock() 호출
+        return ResponseEntity.ok(stockService.updateStock(stockId, updatedStock));
     }
 
     @Operation(summary = "주식 삭제", description = "특정 주식을 삭제합니다.")
     @DeleteMapping("/{stockId}")
     public ResponseEntity<Void> deleteStock(@PathVariable Long stockId) {
-        stockService.removeStock(stockId);  // ✅ StockService에서 removeStock() 호출
+        stockService.removeStock(stockId);
         return ResponseEntity.noContent().build();
     }
 }

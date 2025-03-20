@@ -27,7 +27,6 @@ public class AOPService {
         }
     }
 
-    // ✅ 새롭게 추가된 `doAction()` 메서드
     public void doAction() {
         logAction("기본 액션");
     }

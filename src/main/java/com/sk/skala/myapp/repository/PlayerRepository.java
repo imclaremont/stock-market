@@ -10,7 +10,7 @@ import java.util.Optional;
 public interface PlayerRepository extends JpaRepository<Player, String> {
 
     /**
-     * ✅ 특정 플레이어 조회 (ID 기준)
+     *  특정 플레이어 조회 (ID 기준)
      */
     default Player findPlayerById(String id) {
         return findById(id)
@@ -18,7 +18,7 @@ public interface PlayerRepository extends JpaRepository<Player, String> {
     }
 
     /**
-     * ✅ 특정 플레이어 조회 (이름 기준)
+     *  특정 플레이어 조회 (이름 기준)
      */
     Optional<Player> findByPlayerId(String playerName);
 }

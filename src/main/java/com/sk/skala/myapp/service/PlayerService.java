@@ -21,9 +21,9 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @Slf4j
 public class PlayerService {
-    @Autowired // 🔹 명시적 주입 확인
+    @Autowired // 명시적 주입 확인
     private final PlayerRepository playerRepository;
-    @Autowired // 🔹 명시적 주입 확인
+    @Autowired // 명시적 주입 확인
     private final StockRepository stockRepository; 
 
     public PlayerService(PlayerRepository playerRepository, StockRepository stockRepository) {
@@ -38,21 +38,21 @@ public class PlayerService {
         
         if (players == null || players.isEmpty()) {
             log.warn("⚠️ [PlayerService] 등록된 플레이어가 없음.");
-            return new ArrayList<>();  // 🔹 Null 대신 빈 리스트 반환
+            return new ArrayList<>();  // Null 대신 빈 리스트 반환
         }
     
         log.info("✅ [PlayerService] 조회된 플레이어 수: {}", players.size());
         return players;
     }
 
-    // ✅ 특정 ID로 플레이어 조회 (예외 처리 추가)
+    // 특정 ID로 플레이어 조회 (예외 처리 추가)
     public Player findPlayerById(String playerId) {
         log.debug("🔍 [PlayerService] 플레이어 조회: ID = {}", playerId);
 
         Player player = playerRepository.findById(playerId)
                 .orElseThrow(() -> new NotFoundException("플레이어를 찾을 수 없습니다: " + playerId));
 
-        // ✅ 플레이어의 주식 목록이 null이면 빈 리스트로 설정
+        // 플레이어의 주식 목록이 null이면 빈 리스트로 설정
         if (player.getPlayerStocks() == null) {
             log.warn("⚠️ [PlayerService] 플레이어 '{}'의 playerStocks가 null! 빈 리스트로 초기화", playerId);
             player.setPlayerStocks(new ArrayList<>());
@@ -61,7 +61,7 @@ public class PlayerService {
         return player;
     }
 
-    // ✅ 특정 플레이어를 이름 기준으로 조회
+    // 특정 플레이어를 이름 기준으로 조회
     public Player findPlayerByName(String playerName) {
         log.debug("🔍 [PlayerService] 플레이어 조회 (이름): {}", playerName);
     
@@ -69,7 +69,7 @@ public class PlayerService {
                 .orElseThrow(() -> new NotFoundException("플레이어를 찾을 수 없습니다: " + playerName));
     }
 
-    // ✅ 플레이어 추가 (playerStocks 초기화 보장)
+    // 플레이어 추가 (playerStocks 초기화 보장)
     @Transactional
     public void addPlayer(Player player) {
         log.debug("➕ [PlayerService] 플레이어 추가: {}", player.getPlayerId());
@@ -86,7 +86,7 @@ public class PlayerService {
         log.info("✅ [PlayerService] 플레이어 '{}' 추가 완료", player.getPlayerId());
     }
 
-    // ✅ 플레이어 삭제 (예외 처리 추가)
+    // 플레이어 삭제 (예외 처리 추가)
     @Transactional
     public void removePlayer(String playerId) {
         log.info("🗑 [PlayerService] 플레이어 삭제: {}", playerId);
@@ -98,7 +98,7 @@ public class PlayerService {
         playerRepository.deleteById(playerId);
     }
 
-    // ✅ 플레이어의 주식 구매 기능 (방어 코드 추가)
+    // 플레이어의 주식 구매 기능 (방어 코드 추가)
     @Transactional
     public void buyStock(String playerId, String stockName, int quantity) {
         Player player = findPlayerById(playerId);
@@ -135,7 +135,7 @@ public class PlayerService {
         log.info("✅ [PlayerService] {}님이 {} 주식을 {}주 구매 완료!", playerId, stockName, quantity);
     }
 
-    // ✅ 플레이어의 주식 판매 기능
+    // 플레이어의 주식 판매 기능
     @Transactional
     public void sellStock(String playerId, String stockName, int quantity) {
         Player player = findPlayerById(playerId);

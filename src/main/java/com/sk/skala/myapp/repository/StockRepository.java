@@ -11,17 +11,17 @@ import java.util.Optional;
 public interface StockRepository extends JpaRepository<Stock, Long> {
 
     /**
-     * ✅ 특정 주식 조회 (이름 기준)
+     *  특정 주식 조회 (이름 기준)
      */
     Optional<Stock> findByStockName(String stockName);
 
     /**
-     * ✅ 주식 존재 여부 확인 (이름 기준)
+     *  주식 존재 여부 확인 (이름 기준)
      */
     boolean existsByStockName(String stockName);
 
     /**
-     * ✅ 특정 주식 조회 (ID 기준, 예외처리 포함)
+     *  특정 주식 조회 (ID 기준, 예외처리 포함)
      */
     default Stock findStockById(Long id) {
         return findById(id)
@@ -29,7 +29,7 @@ public interface StockRepository extends JpaRepository<Stock, Long> {
     }
 
     /**
-     * ✅ 특정 주식 조회 (이름 기준, 예외처리 포함)
+     *  특정 주식 조회 (이름 기준, 예외처리 포함)
      */
     default Stock findStockByName(String stockName) {
         return findByStockName(stockName)

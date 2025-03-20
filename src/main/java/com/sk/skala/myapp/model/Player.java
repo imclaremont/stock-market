@@ -32,13 +32,13 @@ public class Player {
 
     @OneToMany(mappedBy = "player", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @JsonManagedReference
-    @ToString.Exclude // 🔹 무한 순환 참조 방지
+    @ToString.Exclude // 무한 순환 참조 방지
     private List<PlayerStock> playerStocks = new ArrayList<>();
 
     public Player(String playerId, int playerMoney) {
         this.playerId = playerId;
         this.playerMoney = playerMoney;
-        this.playerStocks = new ArrayList<>(); // 문제 해결: 리스트 초기화
+        this.playerStocks = new ArrayList<>();
     }
 
     public void addStock(PlayerStock stock) {

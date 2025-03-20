@@ -23,7 +23,7 @@ public class DataInitializer {
     @PostConstruct
     @Transactional
     public void initData() {
-        // ✅ 샘플 주식 데이터 생성
+        // 샘플 주식 데이터 생성
         Stock apple = new Stock("Apple", 150);
         Stock google = new Stock("Google", 2800);
         Stock amazon = new Stock("Amazon", 3400);
@@ -32,12 +32,12 @@ public class DataInitializer {
 
         stockRepository.saveAll(List.of(apple, google, amazon, tesla, samsung));
 
-        // ✅ 샘플 플레이어 데이터 생성 (playerStocks 빈 리스트 설정)
+        // 샘플 플레이어 데이터 생성 (playerStocks 빈 리스트 설정)
         Player player1 = new Player("player001", 10000, new ArrayList<>());
         Player player2 = new Player("player002", 20000, new ArrayList<>());
         Player player3 = new Player("player003", 15000, new ArrayList<>());
 
-        // ✅ 플레이어의 주식 보유 데이터 추가
+        // 플레이어의 주식 보유 데이터 추가
         PlayerStock ps1 = new PlayerStock(apple, 2, player1);
         PlayerStock ps2 = new PlayerStock(google, 1, player1);
         PlayerStock ps3 = new PlayerStock(amazon, 3, player2);

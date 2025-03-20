@@ -10,7 +10,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import java.util.HashMap;
 import java.util.Map;
 
-@ControllerAdvice  // ✅ 변경: 기존 @RestControllerAdvice 제거
+@ControllerAdvice
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(BadRequestException.class)

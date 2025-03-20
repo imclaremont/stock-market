@@ -19,15 +19,15 @@ public class TracingAspect {
 
     private final ObjectMapper objectMapper = new ObjectMapper(); // JSON 변환기
 
-    // ✅ 컨트롤러 계층 포인트컷
+    // 컨트롤러 계층 포인트컷
     @Pointcut("execution(* com.sk.skala.myapp.controller.*.*(..))")
     public void controllerLayer() {}
 
-    // ✅ 서비스 계층 포인트컷
+    // 서비스 계층 포인트컷
     @Pointcut("execution(* com.sk.skala.myapp.service.*.*(..))")
     public void serviceLayer() {}
 
-    // ✅ 컨트롤러 + 서비스 계층을 모두 포함하는 포인트컷
+    // 컨트롤러 + 서비스 계층을 모두 포함하는 포인트컷
     @Pointcut("controllerLayer() || serviceLayer()")
     public void tracingTargets() {}
 

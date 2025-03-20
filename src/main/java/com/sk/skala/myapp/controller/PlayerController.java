@@ -13,7 +13,7 @@ import java.util.List;
 
 @Tag(name = "Player API", description = "플레이어 관리 API")
 @RestController
-@RequestMapping("/api/v1/players") // ✅ API 버전 추가 (v1)
+@RequestMapping("/api/v1/players")
 @RequiredArgsConstructor
 public class PlayerController {
 
@@ -27,21 +27,21 @@ public class PlayerController {
 
     @Operation(summary = "플레이어 ID로 조회", description = "ID에 해당하는 플레이어 정보를 조회합니다.")
     @GetMapping("/{playerId}")
-    public ResponseEntity<Player> getPlayerById(@PathVariable String playerId) {  // 🔹 Long → String 변경
+    public ResponseEntity<Player> getPlayerById(@PathVariable String playerId) {
         return ResponseEntity.ok(playerService.findPlayerById(playerId));
     }
 
     @Operation(summary = "플레이어 이름으로 조회", description = "이름에 해당하는 플레이어 정보를 조회합니다.")
     @GetMapping("/name/{playerName}")
     public ResponseEntity<Player> getPlayerByName(@PathVariable String playerName) {
-        return ResponseEntity.ok(playerService.findPlayerByName(playerName)); // 🔹 `findPlayerByName` 호출
+        return ResponseEntity.ok(playerService.findPlayerByName(playerName));
     }
 
     @Operation(summary = "새로운 플레이어 추가", description = "새로운 플레이어를 추가합니다.")
     @PostMapping
     public ResponseEntity<Void> addPlayer(@RequestBody Player player) {
         playerService.addPlayer(player);
-        return ResponseEntity.ok().build();  // 🔹 void 반환 메서드 대응
+        return ResponseEntity.ok().build();
     }
 
     @Operation(summary = "플레이어 정보 수정", description = "기존 플레이어 정보를 수정합니다.")
@@ -57,16 +57,16 @@ public class PlayerController {
 
     @Operation(summary = "플레이어 삭제", description = "특정 플레이어를 삭제합니다.")
     @DeleteMapping("/{playerId}")
-    public ResponseEntity<Void> deletePlayer(@PathVariable String playerId) { // 🔹 Long → String 변경
+    public ResponseEntity<Void> deletePlayer(@PathVariable String playerId) {
         playerService.removePlayer(playerId);
         return ResponseEntity.noContent().build();
     }
 
     @Operation(summary = "플레이어의 주식 정보 조회", description = "특정 플레이어가 보유한 주식 정보를 조회합니다.")
     @GetMapping("/{playerId}/stocks")
-    public ResponseEntity<List<PlayerStock>> getPlayerStocks(@PathVariable String playerId) { // 🔹 Long → String 변경
+    public ResponseEntity<List<PlayerStock>> getPlayerStocks(@PathVariable String playerId) {
         Player player = playerService.findPlayerById(playerId);
-        return ResponseEntity.ok(player.getPlayerStocks()); // 🔹 직접 플레이어의 보유 주식 반환
+        return ResponseEntity.ok(player.getPlayerStocks());
     }
 
     @Operation(summary = "플레이어 주식 구매", description = "플레이어가 주식을 구매합니다.")
