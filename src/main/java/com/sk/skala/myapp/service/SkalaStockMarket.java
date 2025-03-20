@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.InputMismatchException;
+import java.util.Optional;
 import java.util.Scanner;
 
 @Slf4j
@@ -65,9 +66,15 @@ public class SkalaStockMarket {
             player = new Player(playerId);
 
             System.out.print("초기 투자금을 입력하세요: ");
+            while (!scanner.hasNextInt()) { // 숫자가 아닌 경우 방지
+                System.out.println("🚨 숫자를 입력하세요.");
+                scanner.next(); // 버퍼 초기화
+            }
             int money = scanner.nextInt();
+            scanner.nextLine(); // 버퍼 초기화
+
             player.setPlayerMoney(money);
-            playerService.addPlayer(player);
+            playerService.addPlayer(player); // ✅ 새 플레이어를 추가하여 저장
         }
         return player;
     }
@@ -81,7 +88,13 @@ public class SkalaStockMarket {
         System.out.println("0. 🚪 프로그램 종료");
         System.out.print("👉 선택: ");
 
+        while (!scanner.hasNextInt()) { // 숫자가 아닌 경우 방지
+            System.out.println("🚨 숫자를 입력하세요.");
+            scanner.next(); // 버퍼 초기화
+        }
         int code = scanner.nextInt();
+        scanner.nextLine(); // 버퍼 초기화
+
         switch (code) {
             case 1 -> displayPlayerStocks();
             case 2 -> buyStock(scanner);
@@ -119,66 +132,40 @@ public class SkalaStockMarket {
         System.out.println("\n📈 [주식 목록]");
         System.out.println(stockRepository.getStockListForMenu());
     }
-
+    
     private void buyStock(Scanner scanner) {
         System.out.println("\n🛒 구매할 주식 번호를 선택하세요:");
         displayStockList();
-    
+
         System.out.print("👉 선택: ");
-    
-        // 예외 처리: 숫자가 아닌 입력 방지
-        int index;
-        try {
-            index = scanner.nextInt() - 1;
-        } catch (InputMismatchException e) {
-            log.warn("❌ 입력 오류: 숫자를 입력하세요.");
+        while (!scanner.hasNextInt()) { 
             System.out.println("🚨 숫자를 입력하세요.");
-            scanner.nextLine();  // 버퍼 초기화
-            return;
+            scanner.next();
         }
-    
-        // 인덱스 범위 확인 (잘못된 선택 방지)
+        int index = scanner.nextInt() - 1;
+        scanner.nextLine();
+
         if (index < 0 || index >= stockRepository.getStockList().size()) {
-            log.warn("❌ 잘못된 주식 선택 - 인덱스: {}", index);
             System.out.println("🚨 잘못된 선택입니다.");
             return;
         }
-    
+
         Stock selectedStock = stockRepository.findStock(index);
         if (selectedStock == null) {
-            log.warn("❌ 주식을 찾을 수 없음 - 인덱스: {}", index);
             System.out.println("🚨 해당 주식을 찾을 수 없습니다.");
             return;
         }
-    
+
         System.out.print("🛍 구매할 수량을 입력하세요: ");
-        int quantity;
-        try {
-            quantity = scanner.nextInt();
-        } catch (InputMismatchException e) {
-            log.warn("❌ 입력 오류: 숫자를 입력하세요.");
+        while (!scanner.hasNextInt()) {
             System.out.println("🚨 숫자를 입력하세요.");
-            scanner.nextLine();  // 버퍼 초기화
-            return;
+            scanner.next();
         }
-    
-        int totalCost = selectedStock.getStockPrice() * quantity;
-    
-        if (totalCost > player.getPlayerMoney()) {
-            log.warn("❌ 구매 실패: 잔액 부족 (필요 금액: {}, 보유 금액: {})", totalCost, player.getPlayerMoney());
-            System.out.println("🚨 금액이 부족합니다.");
-            return;
-        }
-    
-        // 플레이어의 잔액 업데이트
-        player.setPlayerMoney(player.getPlayerMoney() - totalCost);
-        player.addStock(new PlayerStock(selectedStock, quantity));
-    
-        log.info("✅ {}주 구매 완료 - 남은 금액: {}", quantity, player.getPlayerMoney());
+        int quantity = scanner.nextInt();
+        scanner.nextLine();
+
+        playerService.buyStock(player.getPlayerId(), selectedStock.getStockName(), quantity);
         System.out.println("✅ " + quantity + "주를 구매했습니다! 남은 금액: " + player.getPlayerMoney());
-    
-        // 변경된 정보를 저장
-        playerService.addPlayer(player);
     }
 
     private void sellStock(Scanner scanner) {
@@ -186,31 +173,29 @@ public class SkalaStockMarket {
         displayPlayerStocks();
 
         System.out.print("👉 선택: ");
+        while (!scanner.hasNextInt()) {
+            System.out.println("🚨 숫자를 입력하세요.");
+            scanner.next();
+        }
         int index = scanner.nextInt() - 1;
+        scanner.nextLine();
 
-        PlayerStock playerStock = player.findStock(index);
-        if (playerStock == null) {
-            log.warn("❌ 잘못된 주식 선택 - 인덱스: {}", index);
+        if (index < 0 || index >= player.getPlayerStocks().size()) {
             System.out.println("🚨 잘못된 선택입니다.");
             return;
         }
 
+        PlayerStock playerStock = player.getPlayerStocks().get(index);
         System.out.print("📉 판매할 수량을 입력하세요: ");
-        int quantity = scanner.nextInt();
 
-        if (quantity > playerStock.getStockQuantity()) {
-            log.warn("❌ 판매 실패: 보유 수량 부족 (보유: {}, 입력: {})", playerStock.getStockQuantity(), quantity);
-            System.out.println("🚨 수량이 부족합니다.");
-            return;
+        while (!scanner.hasNextInt()) {
+            System.out.println("🚨 숫자를 입력하세요.");
+            scanner.next();
         }
+        int quantity = scanner.nextInt();
+        scanner.nextLine();
 
-        Stock baseStock = stockRepository.findStock(playerStock.getStockName());
-        player.setPlayerMoney(player.getPlayerMoney() + baseStock.getStockPrice() * quantity);
-
-        playerStock.setStockQuantity(playerStock.getStockQuantity() - quantity);
-        player.updatePlayerStock(playerStock);
-        log.info("✅ {}주 판매 완료 - 현재 잔액: {}", quantity, player.getPlayerMoney());
-
-        playerService.addPlayer(player);
+        playerService.sellStock(player.getPlayerId(), playerStock.getStockName(), quantity);
+        System.out.println("✅ " + quantity + "주 판매 완료! 현재 잔액: " + player.getPlayerMoney());
     }
 }

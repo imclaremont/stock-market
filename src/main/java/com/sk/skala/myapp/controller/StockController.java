@@ -30,7 +30,7 @@ public class StockController {
     @Operation(summary = "특정 주식 조회 (ID)", description = "주식 ID로 특정 주식 정보를 조회합니다.")
     @GetMapping("/{stockId}")
     public ResponseEntity<Stock> getStockById(@PathVariable int stockId) {
-        Stock stock = stockService.findStockByIndex(stockId);
+        Stock stock = stockService.findStockById(stockId);
         return ResponseEntity.ok(stock);
     }
 

@@ -1,8 +1,8 @@
 package com.sk.skala.myapp.controller;
 
 import com.sk.skala.myapp.model.Player;
+import com.sk.skala.myapp.model.PlayerStock;
 import com.sk.skala.myapp.service.PlayerService;
-import com.sk.skala.myapp.exception.NotFoundException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -14,7 +14,7 @@ import java.util.List;
 
 @Tag(name = "Player API", description = "플레이어 관리 API")
 @RestController
-@RequestMapping("/api/players")
+@RequestMapping("/api/v1/players") // ✅ API 버전 추가 (v1)
 @RequiredArgsConstructor
 public class PlayerController {
 
@@ -27,10 +27,17 @@ public class PlayerController {
         return ResponseEntity.ok(players);
     }
 
-    @Operation(summary = "특정 플레이어 조회", description = "플레이어 ID로 특정 플레이어 정보를 조회합니다.")
+    @Operation(summary = "플레이어 ID로 조회", description = "ID에 해당하는 플레이어 정보를 조회합니다.")
     @GetMapping("/{playerId}")
     public ResponseEntity<Player> getPlayerById(@PathVariable String playerId) {
         Player player = playerService.findPlayerById(playerId);
+        return ResponseEntity.ok(player);
+    }
+
+    @Operation(summary = "플레이어 이름으로 조회", description = "이름에 해당하는 플레이어 정보를 조회합니다.")
+    @GetMapping("/name/{playerName}") // ✅ playerName으로 조회 추가
+    public ResponseEntity<Player> getPlayerByName(@PathVariable String playerName) {
+        Player player = playerService.findPlayerByName(playerName);
         return ResponseEntity.ok(player);
     }
 
@@ -57,5 +64,26 @@ public class PlayerController {
     public ResponseEntity<Void> deletePlayer(@PathVariable String playerId) {
         playerService.removePlayer(playerId);
         return ResponseEntity.noContent().build();
+    }
+
+    @Operation(summary = "플레이어의 주식 정보 조회", description = "특정 플레이어가 보유한 주식 정보를 조회합니다.")
+    @GetMapping("/{playerId}/stocks") // ✅ 플레이어의 주식 조회 추가
+    public ResponseEntity<List<PlayerStock>> getPlayerStocks(@PathVariable String playerId) {
+        Player player = playerService.findPlayerById(playerId);
+        return ResponseEntity.ok(player.getPlayerStocks());
+    }
+
+    @Operation(summary = "플레이어 주식 구매", description = "플레이어가 주식을 구매합니다.")
+    @PostMapping("/{playerId}/buy") // ✅ 주식 구매 API 추가
+    public ResponseEntity<String> buyStock(@PathVariable String playerId, @RequestParam String stockName, @RequestParam int quantity) {
+        playerService.buyStock(playerId, stockName, quantity);
+        return ResponseEntity.ok("✅ 주식 구매 완료: " + stockName + " (" + quantity + "주)");
+    }
+
+    @Operation(summary = "플레이어 주식 판매", description = "플레이어가 주식을 판매합니다.")
+    @PostMapping("/{playerId}/sell") // ✅ 주식 판매 API 추가
+    public ResponseEntity<String> sellStock(@PathVariable String playerId, @RequestParam String stockName, @RequestParam int quantity) {
+        playerService.sellStock(playerId, stockName, quantity);
+        return ResponseEntity.ok("✅ 주식 판매 완료: " + stockName + " (" + quantity + "주)");
     }
 }

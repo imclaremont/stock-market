@@ -2,12 +2,18 @@ admin,600
 skala,206800
 himang10,195000
 claremont,20
-hi,172880,PlayerStock(super=Stock(stockName=HealthPlus, stockPrice=120), stockQuantity=211)
+hi,172880
 hi,199520
 hi,198920
 hi,198680
 hi,198680
 hi,198440
 hi,198200
-hi,172880,PlayerStock(super=Stock(stockName=HealthPlus, stockPrice=120), stockQuantity=211)
-hi,172880,PlayerStock(super=Stock(stockName=HealthPlus, stockPrice=120), stockQuantity=211)
+hi,172880
+hi,172880
+null,10000
+null,10000
+13,10000
+13,100000
+13,100000
+1,100000

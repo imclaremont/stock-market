@@ -29,28 +29,47 @@ public class StockService {
         return stockRepository.findStock(stockName);
     }
 
-    // ✅ 특정 주식 조회 (인덱스 기준)
-    public Stock findStockByIndex(int index) {
-        log.info("🔍 [StockService] 주식 조회 (인덱스): {}", index);
-        Stock stock = stockRepository.findStock(index);
+    // ✅ 특정 주식 조회 (ID 기준)
+    public Stock findStockById(int stockId) {
+        log.info("🔍 [StockService] 주식 조회 (ID): {}", stockId);
+        Stock stock = stockRepository.findStock(stockId);
         if (stock == null) {
-            throw new NotFoundException("해당 인덱스에 주식이 없습니다: " + index);
+            throw new NotFoundException("해당 ID의 주식이 없습니다: " + stockId);
         }
         return stock;
     }
 
-    // ✅ 새로운 주식 추가
+    // ✅ 새로운 주식 추가 (중복 방지 로직 추가)
     public Stock createStock(Stock stock) {
         log.info("➕ [StockService] 주식 추가: {}", stock);
+
+        // 이미 존재하는 주식인지 확인
+        boolean exists = stockRepository.getStockList().stream()
+            .anyMatch(s -> s.getStockName().equalsIgnoreCase(stock.getStockName()));
+
+        if (exists) {
+            throw new IllegalArgumentException("이미 존재하는 주식입니다: " + stock.getStockName());
+        }
+
         stockRepository.getStockList().add(stock);
         stockRepository.saveStockList();
         return stock;
     }
 
-    // ✅ 주식 삭제
+    // ✅ 주식 삭제 (이름 기준)
     public void removeStock(String stockName) {
-        log.info("🗑 [StockService] 주식 삭제: {}", stockName);
+        log.info("🗑 [StockService] 주식 삭제 (이름): {}", stockName);
         Stock stock = findStockByName(stockName);
+
+        List<Stock> stockList = stockRepository.getStockList();
+        stockList.remove(stock);
+        stockRepository.saveStockList();
+    }
+
+    // ✅ 주식 삭제 (ID 기준, 새로운 기능 추가)
+    public void removeStockById(int stockId) {
+        log.info("🗑 [StockService] 주식 삭제 (ID): {}", stockId);
+        Stock stock = findStockById(stockId);
 
         List<Stock> stockList = stockRepository.getStockList();
         stockList.remove(stock);

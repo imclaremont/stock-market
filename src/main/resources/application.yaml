@@ -1,9 +1,34 @@
 spring:
     profiles:
         active: local
-    
+
     application:
         name: myapp
+
+    datasource:
+        url: jdbc:h2:mem:testdb  # H2 인-메모리 데이터베이스 사용
+        driverClassName: org.h2.Driver
+        username: sa
+        password: password
+
+    h2:
+        console:
+            enabled: true
+            path: /h2-console  # H2 콘솔 활성화 및 경로 지정
+
+    jpa:
+        database-platform: org.hibernate.dialect.H2Dialect
+        hibernate:
+            ddl-auto: create-drop  # 애플리케이션 시작 시 테이블 생성 후 종료 시 삭제
+        show-sql: true  # 실행되는 SQL 쿼리 로깅
+        properties:
+            hibernate:
+                format_sql: true  # SQL 포맷 정리
+
+logging:
+    level:
+        org.hibernate.SQL: DEBUG  # Hibernate SQL 쿼리 로깅
+        org.hibernate.type.descriptor.sql.BasicBinder: TRACE  # 바인딩된 SQL 값 로깅
 
 server:
     port: 8080
