@@ -36,7 +36,6 @@ public class SkalaStockMarket {
     }
 
     public void start() {
-        stockRepository.loadStockList();
         playerRepository.loadPlayerList();
 
         try (Scanner scanner = new Scanner(System.in)) {
@@ -103,7 +102,7 @@ public class SkalaStockMarket {
 
     private void executeAopAction() {
         log.debug("✅ AOP Service 실행");
-        aopService.doAction();
+        aopService.logAction("액션 실행");
     }
 
     private void displayPlayerStocks() {
@@ -124,32 +123,61 @@ public class SkalaStockMarket {
     private void buyStock(Scanner scanner) {
         System.out.println("\n🛒 구매할 주식 번호를 선택하세요:");
         displayStockList();
-
+    
         System.out.print("👉 선택: ");
-        int index = scanner.nextInt() - 1;
-
-        Stock selectedStock = stockRepository.findStock(index);
-        if (selectedStock == null) {
+    
+        // 예외 처리: 숫자가 아닌 입력 방지
+        int index;
+        try {
+            index = scanner.nextInt() - 1;
+        } catch (InputMismatchException e) {
+            log.warn("❌ 입력 오류: 숫자를 입력하세요.");
+            System.out.println("🚨 숫자를 입력하세요.");
+            scanner.nextLine();  // 버퍼 초기화
+            return;
+        }
+    
+        // 인덱스 범위 확인 (잘못된 선택 방지)
+        if (index < 0 || index >= stockRepository.getStockList().size()) {
             log.warn("❌ 잘못된 주식 선택 - 인덱스: {}", index);
             System.out.println("🚨 잘못된 선택입니다.");
             return;
         }
-
+    
+        Stock selectedStock = stockRepository.findStock(index);
+        if (selectedStock == null) {
+            log.warn("❌ 주식을 찾을 수 없음 - 인덱스: {}", index);
+            System.out.println("🚨 해당 주식을 찾을 수 없습니다.");
+            return;
+        }
+    
         System.out.print("🛍 구매할 수량을 입력하세요: ");
-        int quantity = scanner.nextInt();
+        int quantity;
+        try {
+            quantity = scanner.nextInt();
+        } catch (InputMismatchException e) {
+            log.warn("❌ 입력 오류: 숫자를 입력하세요.");
+            System.out.println("🚨 숫자를 입력하세요.");
+            scanner.nextLine();  // 버퍼 초기화
+            return;
+        }
+    
         int totalCost = selectedStock.getStockPrice() * quantity;
-
+    
         if (totalCost > player.getPlayerMoney()) {
             log.warn("❌ 구매 실패: 잔액 부족 (필요 금액: {}, 보유 금액: {})", totalCost, player.getPlayerMoney());
             System.out.println("🚨 금액이 부족합니다.");
             return;
         }
-
+    
+        // 플레이어의 잔액 업데이트
         player.setPlayerMoney(player.getPlayerMoney() - totalCost);
         player.addStock(new PlayerStock(selectedStock, quantity));
+    
         log.info("✅ {}주 구매 완료 - 남은 금액: {}", quantity, player.getPlayerMoney());
         System.out.println("✅ " + quantity + "주를 구매했습니다! 남은 금액: " + player.getPlayerMoney());
-
+    
+        // 변경된 정보를 저장
         playerService.addPlayer(player);
     }
 
