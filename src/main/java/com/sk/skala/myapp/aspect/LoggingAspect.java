@@ -3,6 +3,7 @@ package com.sk.skala.myapp.aspect;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.*;
 import org.springframework.stereotype.Component;
+
 import java.util.Arrays;
 import java.util.logging.Logger;
 
@@ -25,17 +26,24 @@ public class LoggingAspect {
         logger.info("📥 [요청] 메서드 실행: " + methodName + " | 파라미터: " + Arrays.toString(args));
     }
 
-    // ✅ 정상적으로 실행된 후 반환값 로깅
     @AfterReturning(pointcut = "applicationMethods()", returning = "result")
     public void logAfterReturning(JoinPoint joinPoint, Object result) {
         String methodName = joinPoint.getSignature().getName();
-        logger.info("📤 [응답] 메서드 완료: " + methodName + " | 반환값: " + result);
+
+        // 🔹 result가 null이면 "null"로 출력
+        String resultString = (result != null) ? result.toString() : "null";
+
+        logger.info("📤 [응답] 메서드 완료: " + methodName + " | 반환값: " + resultString);
     }
 
-    // ✅ 예외 발생 시 예외 정보 로깅
+    // ✅ 예외 발생 시 예외 정보 로깅 (🔥 예외를 다시 던지도록 수정)
     @AfterThrowing(pointcut = "applicationMethods()", throwing = "exception")
     public void logAfterThrowing(JoinPoint joinPoint, Throwable exception) {
         String methodName = joinPoint.getSignature().getName();
+        
         logger.severe("❌ [오류] 예외 발생: " + methodName + " | 예외 메시지: " + exception.getMessage());
+
+        // 🔥 예외를 다시 던져서 AOP가 `null`을 반환하지 않도록 수정
+        throw new RuntimeException(exception);
     }
 }

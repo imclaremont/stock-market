@@ -13,6 +13,7 @@ import lombok.*;
 @AllArgsConstructor
 @ToString
 @EqualsAndHashCode(of = "stockName")
+@Builder // ✅ Builder 패턴 추가 (추천)
 public class Stock {
 
     @Id
@@ -26,6 +27,14 @@ public class Stock {
     @Min(value = 0, message = "주식 가격은 0 이상이어야 합니다.")
     @Column(name = "stock_price", nullable = false)
     private int stockPrice;  // ✅ 주식 가격
+
+    /**
+     * ✅ 필요한 생성자 추가
+     */
+    public Stock(String stockName, int stockPrice) {
+        this.stockName = stockName;
+        this.stockPrice = stockPrice;
+    }
 
     /**
      * ✅ 주식 정보 포맷 변환 (파일 저장용)

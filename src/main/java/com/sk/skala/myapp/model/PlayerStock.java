@@ -1,5 +1,8 @@
 package com.sk.skala.myapp.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import lombok.*;
@@ -30,7 +33,9 @@ public class PlayerStock {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "player_id", nullable = false)
-    private Player player;  // ✅ Player와 관계 설정
+    @JsonBackReference
+    @ToString.Exclude // 🔹 무한 순환 참조 방지
+    private Player player;
 
     /**
      * ✅ Stock 정보를 기반으로 PlayerStock 생성

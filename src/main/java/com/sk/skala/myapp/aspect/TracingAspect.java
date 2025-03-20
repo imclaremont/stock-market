@@ -8,6 +8,7 @@ import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.stereotype.Component;
 import lombok.extern.slf4j.Slf4j;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -32,43 +33,40 @@ public class TracingAspect {
 
     @Around("tracingTargets()")
     public Object trace(ProceedingJoinPoint joinPoint) throws Throwable {
-        // ✅ 메소드 정보 가져오기
         MethodSignature methodSignature = (MethodSignature) joinPoint.getSignature();
         String className = methodSignature.getDeclaringType().getSimpleName();
         String methodName = methodSignature.getName();
 
-        // ✅ 현재 시간 기록
         long startTime = System.currentTimeMillis();
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
         String formattedTime = dateFormat.format(new Date(startTime));
 
-        // ✅ 요청 파라미터 JSON 변환
-        String argsString = objectMapper.writeValueAsString(joinPoint.getArgs());
+        String argsString;
+        try {
+            argsString = objectMapper.writeValueAsString(joinPoint.getArgs());
+        } catch (Exception e) {
+            argsString = "[JSON 변환 오류]";
+        }
 
         log.info("📥 [ENTER] {}.{}() | 실행 시간: {} | 요청 파라미터: {}", className, methodName, formattedTime, argsString);
 
         try {
-            // ✅ 실제 메소드 실행
             Object result = joinPoint.proceed();
-
-            // ✅ 실행 시간 계산
             long executionTime = System.currentTimeMillis() - startTime;
 
-            // ✅ 응답 데이터 JSON 변환 (100자 이상이면 생략)
-            String resultString = objectMapper.writeValueAsString(result);
-            if (resultString.length() > 100) {
-                resultString = resultString.substring(0, 100) + "... (truncated)";
+            String resultString;
+            try {
+                resultString = (result != null) ? objectMapper.writeValueAsString(result) : "null";
+            } catch (Exception e) {
+                resultString = "[JSON 변환 오류]";
             }
 
             log.info("📤 [EXIT] {}.{}() | 실행 시간: {}ms | 응답 데이터: {}", className, methodName, executionTime, resultString);
 
             return result;
         } catch (Throwable t) {
-            // ✅ 예외 발생 시 로깅
             long executionTime = System.currentTimeMillis() - startTime;
-
             log.error("❌ [ERROR] {}.{}() | 실행 시간: {}ms | 예외 발생: {}", className, methodName, executionTime, t.getMessage());
-
             throw t;
         }
     }

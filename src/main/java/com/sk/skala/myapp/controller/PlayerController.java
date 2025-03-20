@@ -6,7 +6,6 @@ import com.sk.skala.myapp.service.PlayerService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -33,9 +32,9 @@ public class PlayerController {
     }
 
     @Operation(summary = "플레이어 이름으로 조회", description = "이름에 해당하는 플레이어 정보를 조회합니다.")
-    @GetMapping("/name/{playerName}") 
+    @GetMapping("/name/{playerName}")
     public ResponseEntity<Player> getPlayerByName(@PathVariable String playerName) {
-        return ResponseEntity.ok(playerService.findPlayerById(playerName));  // 🔹 findPlayerByName → findPlayerById
+        return ResponseEntity.ok(playerService.findPlayerByName(playerName)); // 🔹 `findPlayerByName` 호출
     }
 
     @Operation(summary = "새로운 플레이어 추가", description = "새로운 플레이어를 추가합니다.")
