@@ -6,10 +6,11 @@ import com.sk.skala.myapp.model.Stock;
 import com.sk.skala.myapp.repository.PlayerRepository;
 import com.sk.skala.myapp.repository.StockRepository;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.InputMismatchException;
+import java.util.List;
 import java.util.Optional;
 import java.util.Scanner;
 
@@ -25,7 +26,6 @@ public class SkalaStockMarket {
 
     private Player player = null;
 
-    @Autowired
     public SkalaStockMarket(PlayerService playerService, StockService stockService, 
                             PlayerRepository playerRepository, StockRepository stockRepository,
                             AOPService aopService) {
@@ -36,9 +36,8 @@ public class SkalaStockMarket {
         this.aopService = aopService;
     }
 
+    @Transactional
     public void start() {
-        playerRepository.loadPlayerList();
-
         try (Scanner scanner = new Scanner(System.in)) {
             player = getOrCreatePlayer(scanner);
             displayPlayerStocks();
@@ -59,24 +58,22 @@ public class SkalaStockMarket {
     private Player getOrCreatePlayer(Scanner scanner) {
         System.out.print("플레이어 ID를 입력하세요: ");
         String playerId = scanner.nextLine();
-        player = playerService.findPlayerById(playerId);
-
-        if (player == null) {
+        
+        return playerRepository.findById(playerId).orElseGet(() -> {
             log.info("🆕 새로운 플레이어 생성: {}", playerId);
-            player = new Player(playerId);
-
             System.out.print("초기 투자금을 입력하세요: ");
-            while (!scanner.hasNextInt()) { // 숫자가 아닌 경우 방지
+
+            while (!scanner.hasNextInt()) {
                 System.out.println("🚨 숫자를 입력하세요.");
-                scanner.next(); // 버퍼 초기화
+                scanner.next();
             }
             int money = scanner.nextInt();
-            scanner.nextLine(); // 버퍼 초기화
+            scanner.nextLine();
 
-            player.setPlayerMoney(money);
-            playerService.addPlayer(player); // ✅ 새 플레이어를 추가하여 저장
-        }
-        return player;
+            Player newPlayer = new Player(playerId, money);
+            playerRepository.save(newPlayer);
+            return newPlayer;
+        });
     }
 
     private boolean processMenu(Scanner scanner) {
@@ -88,12 +85,12 @@ public class SkalaStockMarket {
         System.out.println("0. 🚪 프로그램 종료");
         System.out.print("👉 선택: ");
 
-        while (!scanner.hasNextInt()) { // 숫자가 아닌 경우 방지
+        while (!scanner.hasNextInt()) {
             System.out.println("🚨 숫자를 입력하세요.");
-            scanner.next(); // 버퍼 초기화
+            scanner.next();
         }
         int code = scanner.nextInt();
-        scanner.nextLine(); // 버퍼 초기화
+        scanner.nextLine();
 
         switch (code) {
             case 1 -> displayPlayerStocks();
@@ -124,15 +121,19 @@ public class SkalaStockMarket {
         System.out.println("- 🆔 ID: " + player.getPlayerId());
         System.out.println("- 💰 잔액: " + player.getPlayerMoney());
         System.out.println("- 📜 보유 주식 목록");
-        System.out.println(player.getPlayerStocksForMenu());
+        player.getPlayerStocks().forEach(System.out::println);
     }
 
     private void displayStockList() {
         log.info("📢 주식 목록 표시");
+        List<Stock> stocks = stockRepository.findAll();
         System.out.println("\n📈 [주식 목록]");
-        System.out.println(stockRepository.getStockListForMenu());
+        for (int i = 0; i < stocks.size(); i++) {
+            System.out.println((i + 1) + ". " + stocks.get(i));
+        }
     }
-    
+
+    @Transactional
     private void buyStock(Scanner scanner) {
         System.out.println("\n🛒 구매할 주식 번호를 선택하세요:");
         displayStockList();
@@ -145,16 +146,13 @@ public class SkalaStockMarket {
         int index = scanner.nextInt() - 1;
         scanner.nextLine();
 
-        if (index < 0 || index >= stockRepository.getStockList().size()) {
+        List<Stock> stocks = stockRepository.findAll();
+        if (index < 0 || index >= stocks.size()) {
             System.out.println("🚨 잘못된 선택입니다.");
             return;
         }
 
-        Stock selectedStock = stockRepository.findStock(index);
-        if (selectedStock == null) {
-            System.out.println("🚨 해당 주식을 찾을 수 없습니다.");
-            return;
-        }
+        Stock selectedStock = stocks.get(index);
 
         System.out.print("🛍 구매할 수량을 입력하세요: ");
         while (!scanner.hasNextInt()) {
@@ -168,6 +166,7 @@ public class SkalaStockMarket {
         System.out.println("✅ " + quantity + "주를 구매했습니다! 남은 금액: " + player.getPlayerMoney());
     }
 
+    @Transactional
     private void sellStock(Scanner scanner) {
         System.out.println("\n💰 판매할 주식 번호를 선택하세요:");
         displayPlayerStocks();
@@ -180,12 +179,13 @@ public class SkalaStockMarket {
         int index = scanner.nextInt() - 1;
         scanner.nextLine();
 
-        if (index < 0 || index >= player.getPlayerStocks().size()) {
+        List<PlayerStock> stocks = player.getPlayerStocks();
+        if (index < 0 || index >= stocks.size()) {
             System.out.println("🚨 잘못된 선택입니다.");
             return;
         }
 
-        PlayerStock playerStock = player.getPlayerStocks().get(index);
+        PlayerStock playerStock = stocks.get(index);
         System.out.print("📉 판매할 수량을 입력하세요: ");
 
         while (!scanner.hasNextInt()) {

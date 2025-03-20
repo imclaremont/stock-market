@@ -23,65 +23,62 @@ public class PlayerController {
     @Operation(summary = "전체 플레이어 조회", description = "모든 플레이어 정보를 조회합니다.")
     @GetMapping
     public ResponseEntity<List<Player>> getAllPlayers() {
-        List<Player> players = playerService.getAllPlayers();
-        return ResponseEntity.ok(players);
+        return ResponseEntity.ok(playerService.getAllPlayers());
     }
 
     @Operation(summary = "플레이어 ID로 조회", description = "ID에 해당하는 플레이어 정보를 조회합니다.")
     @GetMapping("/{playerId}")
-    public ResponseEntity<Player> getPlayerById(@PathVariable String playerId) {
-        Player player = playerService.findPlayerById(playerId);
-        return ResponseEntity.ok(player);
+    public ResponseEntity<Player> getPlayerById(@PathVariable String playerId) {  // 🔹 Long → String 변경
+        return ResponseEntity.ok(playerService.findPlayerById(playerId));
     }
 
     @Operation(summary = "플레이어 이름으로 조회", description = "이름에 해당하는 플레이어 정보를 조회합니다.")
-    @GetMapping("/name/{playerName}") // ✅ playerName으로 조회 추가
+    @GetMapping("/name/{playerName}") 
     public ResponseEntity<Player> getPlayerByName(@PathVariable String playerName) {
-        Player player = playerService.findPlayerByName(playerName);
-        return ResponseEntity.ok(player);
+        return ResponseEntity.ok(playerService.findPlayerById(playerName));  // 🔹 findPlayerByName → findPlayerById
     }
 
     @Operation(summary = "새로운 플레이어 추가", description = "새로운 플레이어를 추가합니다.")
     @PostMapping
-    public ResponseEntity<Player> addPlayer(@RequestBody Player player) {
+    public ResponseEntity<Void> addPlayer(@RequestBody Player player) {
         playerService.addPlayer(player);
-        return ResponseEntity.status(HttpStatus.CREATED).body(player);
+        return ResponseEntity.ok().build();  // 🔹 void 반환 메서드 대응
     }
 
     @Operation(summary = "플레이어 정보 수정", description = "기존 플레이어 정보를 수정합니다.")
     @PutMapping("/{playerId}")
     public ResponseEntity<Player> updatePlayer(@PathVariable String playerId, @RequestBody Player updatedPlayer) {
-        Player existingPlayer = playerService.findPlayerById(playerId);
+        Player player = playerService.findPlayerById(playerId);
+        player.setPlayerMoney(updatedPlayer.getPlayerMoney());
+        player.setPlayerStocks(updatedPlayer.getPlayerStocks());
 
-        existingPlayer.setPlayerMoney(updatedPlayer.getPlayerMoney());
-        existingPlayer.setPlayerStocks(updatedPlayer.getPlayerStocks());
-
-        return ResponseEntity.ok(existingPlayer);
+        playerService.addPlayer(player);
+        return ResponseEntity.ok(player);
     }
 
     @Operation(summary = "플레이어 삭제", description = "특정 플레이어를 삭제합니다.")
     @DeleteMapping("/{playerId}")
-    public ResponseEntity<Void> deletePlayer(@PathVariable String playerId) {
+    public ResponseEntity<Void> deletePlayer(@PathVariable String playerId) { // 🔹 Long → String 변경
         playerService.removePlayer(playerId);
         return ResponseEntity.noContent().build();
     }
 
     @Operation(summary = "플레이어의 주식 정보 조회", description = "특정 플레이어가 보유한 주식 정보를 조회합니다.")
-    @GetMapping("/{playerId}/stocks") // ✅ 플레이어의 주식 조회 추가
-    public ResponseEntity<List<PlayerStock>> getPlayerStocks(@PathVariable String playerId) {
+    @GetMapping("/{playerId}/stocks")
+    public ResponseEntity<List<PlayerStock>> getPlayerStocks(@PathVariable String playerId) { // 🔹 Long → String 변경
         Player player = playerService.findPlayerById(playerId);
-        return ResponseEntity.ok(player.getPlayerStocks());
+        return ResponseEntity.ok(player.getPlayerStocks()); // 🔹 직접 플레이어의 보유 주식 반환
     }
 
     @Operation(summary = "플레이어 주식 구매", description = "플레이어가 주식을 구매합니다.")
-    @PostMapping("/{playerId}/buy") // ✅ 주식 구매 API 추가
+    @PostMapping("/{playerId}/buy")
     public ResponseEntity<String> buyStock(@PathVariable String playerId, @RequestParam String stockName, @RequestParam int quantity) {
         playerService.buyStock(playerId, stockName, quantity);
         return ResponseEntity.ok("✅ 주식 구매 완료: " + stockName + " (" + quantity + "주)");
     }
 
     @Operation(summary = "플레이어 주식 판매", description = "플레이어가 주식을 판매합니다.")
-    @PostMapping("/{playerId}/sell") // ✅ 주식 판매 API 추가
+    @PostMapping("/{playerId}/sell")
     public ResponseEntity<String> sellStock(@PathVariable String playerId, @RequestParam String stockName, @RequestParam int quantity) {
         playerService.sellStock(playerId, stockName, quantity);
         return ResponseEntity.ok("✅ 주식 판매 완료: " + stockName + " (" + quantity + "주)");
