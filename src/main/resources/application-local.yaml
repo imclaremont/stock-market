@@ -1,0 +1,22 @@
+# 로컬 개발 환경용
+spring:
+    config:
+        activate:
+            on-profile: local
+
+    jpa:
+        hibernate:
+            ddl-auto: update # 개발 중에는 자동 테이블 업데이트 허용
+        show-sql: true # SQL 쿼리 로그 출력
+
+logging:
+    level:
+        com.sk.skala: DEBUG  # ✅ 프로젝트 패키지 로그 레벨을 DEBUG로 설정(로컬에서는 디버깅을 위해 로그를 상세하게 출력)
+        org.springframework.web: INFO  # ✅ Spring Web 관련 로그는 INFO
+        org.springframework.aop: INFO  # ✅ AOP 관련 로그는 INFO
+
+my:
+    info:
+        name: "claremont"
+        email: "dhha1515@gmail.com"
+        role: "developer"

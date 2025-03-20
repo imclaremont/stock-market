@@ -1,0 +1,7 @@
+admin,600
+skala,206800
+himang10,195000
+claremont,20
+hi,198920,PlayerStock(super=Stock(stockName=HealthPlus, stockPrice=120), stockQuantity=5)
+hi,199520
+hi,198920,PlayerStock(super=Stock(stockName=HealthPlus, stockPrice=120), stockQuantity=5)

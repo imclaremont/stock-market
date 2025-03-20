@@ -1,0 +1,24 @@
+# 운영 환경용
+spring:
+    config:
+        activate:
+            on-profile: prod
+
+    jpa:
+        hibernate:
+            ddl-auto: validate # 운영 환경에서는 테이블 자동 변경 방지
+        show-sql: false # 운영 환경에서는 SQL 로그 비활성화
+
+logging:
+    level:
+        com.sk.skala: INFO  # ✅ DEBUG보다 가벼운 INFO 레벨 사용 (운영 환경에서는 DEBUG 최소화)
+        org.springframework.web: WARN  # ✅ 웹 요청 관련 로그는 WARN (필요한 경우만 출력)
+        org.springframework.aop: WARN  # ✅ AOP 관련 로그도 WARN으로 설정
+        org.hibernate.SQL: ERROR  # ✅ Hibernate SQL 쿼리 로그는 ERROR만 출력 (불필요한 SQL 로그 제거)
+        root: WARN  # ✅ 기본 로그 레벨은 WARN 이상만 출력
+
+my:
+    info:
+        name: "claremont"
+        email: "dhha1515@gmail.com"
+        role: "developer"
