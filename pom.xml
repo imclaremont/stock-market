@@ -11,9 +11,9 @@
     </parent>
 
     <groupId>com.sk.skala</groupId>
-    <artifactId>myapp</artifactId>
+    <artifactId>stock-market</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>myapp</name>
+    <name>stock-market</name>
     <description>Spring Boot Stock Application</description>
 
     <properties>
