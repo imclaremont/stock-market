@@ -1,21 +1,21 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: stock-market
+  name: sk029-stock-market
   labels:
-    app: stock-market
+    app: sk029-stock-market
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: stock-market
+      app: sk029-stock-market
   template:
     metadata:
       labels:
-        app: stock-market
+        app: sk029-stock-market
     spec:
       containers:
-        - name: stock-market
-          image: amdp-registry.skala-ai.com/skala25a/stock-market:1.0.0
+        - name: sk029-stock-market
+          image: amdp-registry.skala-ai.com/skala25a/sk029-stock-market:1.0.0
           ports:
             - containerPort: 8080
