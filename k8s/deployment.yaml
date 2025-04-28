@@ -14,6 +14,11 @@ spec:
       labels:
         app: sk029-stock-market
     spec:
+      tolerations:
+        - key: "control-plane"
+          operator: "Equal"
+          value: "amdp"
+          effect: "NoSchedule"
       containers:
         - name: sk029-stock-market
           image: amdp-registry.skala-ai.com/skala25a/sk029-stock-market:1.0.0
