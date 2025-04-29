@@ -4,7 +4,7 @@ metadata:
   name: sk029-stock-config
 data:
   SPRING_PROFILES_ACTIVE: "local"
-  APP_NAME: "myapp"
+  APP_NAME: "sk029-stock-market"
   SERVER_PORT: "8085"
   DATASOURCE_URL: "jdbc:h2:mem:testdb"
   DATASOURCE_DRIVER: "org.h2.Driver"
