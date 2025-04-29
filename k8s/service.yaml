@@ -1,10 +1,10 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: stock-market
+  name: sk029-stock-market
 spec:
   selector:
-    app: stock-market
+    app: sk029-stock-market
   ports:
     - protocol: TCP
       port: 8085

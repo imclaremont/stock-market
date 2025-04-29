@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: stock-config
+  name: sk029-stock-config
 data:
   SPRING_PROFILES_ACTIVE: "local"
   APP_NAME: "myapp"

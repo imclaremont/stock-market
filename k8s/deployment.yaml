@@ -1,27 +1,27 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: stock-market-deployment  # Deployment 이름
+  name: sk029-stock-market-deployment  # Deployment 이름
   labels:
-    app: stock-market
+    app: sk029-stock-market
 spec:
   replicas: 2  # Pod을 2개로 생성
   selector:
     matchLabels:
-      app: stock-market
+      app: sk029-stock-market
   template:
     metadata:
       labels:
-        app: stock-market
+        app: sk029-stock-market
     spec:
       containers:
         - name: stock-market-container
-          image: amdp-registry.skala-ai.com/skala25a/sk029-my-app:1.0.kaniko-docker-9-26bdb5c13c67  # Jenkins로 빌드한 이미지
+          image: amdp-registry.skala-ai.com/skala25a/sk029-stock-market:1.0  # Jenkins로 빌드한 이미지
           ports:
             - containerPort: 8085
           envFrom:
             - configMapRef:
-                name: stock-config  # 만들어준 ConfigMap 이름
+                name: sk029-stock-config  # 만들어준 ConfigMap 이름
           livenessProbe:  # 살아있는지 확인 (Actuator 사용)
             httpGet:
               path: /actuator/health/liveness
@@ -49,5 +49,5 @@ spec:
                   - key: app
                     operator: In
                     values:
-                      - stock-market
+                      - sk029-stock-market
               topologyKey: "kubernetes.io/hostname"

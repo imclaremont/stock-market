@@ -1,7 +1,7 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: stock-market-ingress
+  name: sk029-stock-market-ingress
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
@@ -14,7 +14,7 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: stock-market
+                name: sk029-stock-market
                 port:
                   number: 8085
     - host: a55bf7a790b8e4b26b67a129d3263385-1094816387.ap-northeast-2.elb.amazonaws.com
@@ -24,6 +24,6 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: stock-market
+                name: sk029-stock-market
                 port:
                   number: 8085
