@@ -7,7 +7,17 @@ metadata:
 spec:
   ingressClassName: public-nginx
   rules:
-    - host: stock-market.local
+    - host: sk029.stock-market.local
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: stock-market
+                port:
+                  number: 8085
+    - host: a55bf7a790b8e4b26b67a129d3263385-1094816387.ap-northeast-2.elb.amazonaws.com
       http:
         paths:
           - path: /
