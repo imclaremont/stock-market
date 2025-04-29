@@ -1,59 +1,58 @@
 spring:
-    profiles:
-        active: local
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:local}  # 기본 실행 프로필을 환경 변수로 설정 (기본값은 local)
 
-    application:
-        name: myapp
+  application:
+    name: ${APP_NAME:myapp}  # 애플리케이션 이름을 환경 변수로 설정
 
-    datasource:
-        url: jdbc:h2:mem:testdb  # H2 인-메모리 데이터베이스 사용
-        driverClassName: org.h2.Driver
-        username: sa
-        password: password
+  datasource:
+    url: ${DATASOURCE_URL:jdbc:h2:mem:testdb}  # H2 메모리 DB URL, 필요시 외부 DB로 변경 가능
+    driver-class-name: ${DATASOURCE_DRIVER:org.h2.Driver}  # JDBC 드라이버 클래스
+    username: ${DATASOURCE_USERNAME:sa}  # DB 사용자 이름
+    password: ${DATASOURCE_PASSWORD:password}  # DB 비밀번호 (보안 필요 시 Secret 사용 권장)
 
-    h2:
-        console:
-            enabled: true
-            path: /h2-console  # H2 콘솔 활성화 및 경로 지정
+  h2:
+    console:
+      enabled: ${H2_CONSOLE_ENABLED:true}  # H2 웹 콘솔 활성화 여부
+      path: ${H2_CONSOLE_PATH:/h2-console}  # 콘솔 접근 경로
 
-    jpa:
-        database-platform: org.hibernate.dialect.H2Dialect
-        hibernate:
-            ddl-auto: create-drop  # 애플리케이션 시작 시 테이블 생성 후 종료 시 삭제
-        show-sql: true  # 실행되는 SQL 쿼리 로깅
-        properties:
-            hibernate:
-                format_sql: true  # SQL 포맷 정리
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect  # H2 전용 Hibernate dialect
+    hibernate:
+      ddl-auto: ${HIBERNATE_DDL_AUTO:create-drop}  # 테이블 생성 전략 (운영 환경에서는 update 또는 none 권장)
+    show-sql: ${SHOW_SQL:true}  # SQL 출력 여부
+    properties:
+      hibernate:
+        format_sql: ${FORMAT_SQL:true}  # SQL 포맷팅 옵션
 
 logging:
-    level:
-        org.hibernate.SQL: DEBUG  # Hibernate SQL 쿼리 로깅
-        org.hibernate.type.descriptor.sql.BasicBinder: TRACE  # 바인딩된 SQL 값 로깅
+  level:
+    org.hibernate.SQL: ${LOG_LEVEL_SQL:DEBUG}  # SQL 로그 레벨
+    org.hibernate.type.descriptor.sql.BasicBinder: ${LOG_LEVEL_BINDER:TRACE}  # SQL 파라미터 로그
 
 server:
-    port: 8085
+  port: ${SERVER_PORT:8085}  # 서버 포트 설정
 
 springdoc:
-    swagger-ui:
-        path: /swagger/swagger-ui # http://localhost:8080/swagger/swagger-ui
-    api-docs:
-        path: /swagger/swagger-docs # http://localhost:8080/swagger/swagger-docs
+  swagger-ui:
+    path: ${SWAGGER_UI_PATH:/swagger/swagger-ui}  # Swagger UI 경로
+  api-docs:
+    path: ${SWAGGER_DOCS_PATH:/swagger/swagger-docs}  # API 명세서 경로
 
-# Actuator 설정
 management:
-    endpoints:
-        web:
-            exposure:
-                include: health, metrics, loggers, info, threaddump, env # 노출할 Actuator 엔드포인트 지정
-    endpoint:
-        health:
-            show-details: always  # health 상태에 대한 상세 정보 노출
-        metrics:
-            enabled: true  # 메트릭 활성화
-        loggers:
-            enabled: true  # 로그 레벨 동적 변경 활성화
-        env:
-            enabled: true  # 환경 변수 조회 활성화
-    info:
-        env:
-            enabled: true  # 애플리케이션 정보 노출 활성화
+  endpoints:
+    web:
+      exposure:
+        include: ${ACTUATOR_ENDPOINTS:health,metrics,loggers,info,threaddump,env}  # 노출할 actuator 엔드포인트 목록
+  endpoint:
+    health:
+      show-details: ${HEALTH_SHOW_DETAILS:always}  # 헬스 체크 상세 정보 표시 여부
+    metrics:
+      enabled: ${METRICS_ENABLED:true}  # 메트릭 엔드포인트 활성화
+    loggers:
+      enabled: ${LOGGERS_ENABLED:true}  # 로그 레벨 조정 엔드포인트 활성화
+    env:
+      enabled: ${ENV_ENABLED:true}  # 환경 변수 확인 엔드포인트 활성화
+  info:
+    env:
+      enabled: ${INFO_ENV_ENABLED:true}  # info 엔드포인트 내 환경 정보 노출 여부

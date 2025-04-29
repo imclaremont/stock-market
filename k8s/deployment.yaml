@@ -1,28 +1,53 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: sk029-stock-market
+  name: stock-market-deployment  # Deployment 이름
   labels:
-    app: sk029-stock-market
+    app: stock-market
 spec:
-  replicas: 1
+  replicas: 2  # Pod을 2개로 생성
   selector:
     matchLabels:
-      app: sk029-stock-market
+      app: stock-market
   template:
     metadata:
       labels:
-        app: sk029-stock-market
+        app: stock-market
     spec:
-      tolerations:
-        - key: "control-plane"
-          operator: "Equal"
-          value: "amdp"
-          effect: "NoSchedule"
       containers:
-        - name: sk029-stock-market
-        image: amdp-registry.skala-ai.com/skala25a/sk029-my-app:1.0.kaniko-docker-9-26bdb5c13c67
+        - name: stock-market-container
+          image: amdp-registry.skala-ai.com/skala25a/sk029-my-app:1.0.kaniko-docker-9-26bdb5c13c67  # Jenkins로 빌드한 이미지
           ports:
             - containerPort: 8085
-      imagePullSecrets:
-        - name: regcred
+          envFrom:
+            - configMapRef:
+                name: stock-config  # 만들어준 ConfigMap 이름
+          livenessProbe:  # 살아있는지 확인 (Actuator 사용)
+            httpGet:
+              path: /actuator/health/liveness
+              port: 8085
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          readinessProbe:  # 준비되었는지 확인 (Actuator 사용)
+            httpGet:
+              path: /actuator/health/readiness
+              port: 8085
+            initialDelaySeconds: 10
+            periodSeconds: 5
+          resources:
+            requests:
+              cpu: 100m  # 기본 최소 CPU 자원
+              memory: 128Mi  # 기본 최소 메모리
+            limits:
+              cpu: 500m  # 최대 CPU 제한
+              memory: 512Mi  # 최대 메모리 제한
+      affinity:  # Pod 안티-어피니티 적용 (같은 노드에 붙지 않게)
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchExpressions:
+                  - key: app
+                    operator: In
+                    values:
+                      - stock-market
+              topologyKey: "kubernetes.io/hostname"

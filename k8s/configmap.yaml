@@ -1,0 +1,27 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: stock-config
+data:
+  SPRING_PROFILES_ACTIVE: "local"
+  APP_NAME: "myapp"
+  SERVER_PORT: "8085"
+  DATASOURCE_URL: "jdbc:h2:mem:testdb"
+  DATASOURCE_DRIVER: "org.h2.Driver"
+  DATASOURCE_USERNAME: "sa"
+  DATASOURCE_PASSWORD: "password"
+  H2_CONSOLE_ENABLED: "true"
+  H2_CONSOLE_PATH: "/h2-console"
+  HIBERNATE_DDL_AUTO: "create-drop"
+  SHOW_SQL: "true"
+  FORMAT_SQL: "true"
+  LOG_LEVEL_SQL: "DEBUG"
+  LOG_LEVEL_BINDER: "TRACE"
+  SWAGGER_UI_PATH: "/swagger/swagger-ui"
+  SWAGGER_DOCS_PATH: "/swagger/swagger-docs"
+  ACTUATOR_ENDPOINTS: "health,metrics,loggers,info,threaddump,env"
+  HEALTH_SHOW_DETAILS: "always"
+  METRICS_ENABLED: "true"
+  LOGGERS_ENABLED: "true"
+  ENV_ENABLED: "true"
+  INFO_ENV_ENABLED: "true"
