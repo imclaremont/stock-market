@@ -37,10 +37,23 @@ public class SkalaStockMarket {
 
     @Transactional
     public void start() {
+        if (isLocalProfile()) {
+            runWithScanner();
+        } else {
+            log.info("✅ 운영 환경에서는 API 서버 모드로만 실행됩니다. Scanner 입력을 받지 않습니다.");
+        }
+    }
+
+    private boolean isLocalProfile() {
+        String profile = System.getProperty("spring.profiles.active", "default");
+        return profile.equals("local");
+    }
+
+    private void runWithScanner() {
         try (Scanner scanner = new Scanner(System.in)) {
             player = getOrCreatePlayer(scanner);
             displayPlayerStocks();
-
+    
             boolean running = true;
             while (running) {
                 try {
