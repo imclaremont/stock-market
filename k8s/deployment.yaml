@@ -37,10 +37,10 @@ spec:
           resources:
             requests:
               cpu: 100m  # 기본 최소 CPU 자원
-              memory: 128Mi  # 기본 최소 메모리
+              memory: 256Mi  # 기본 최소 메모리
             limits:
               cpu: 500m  # 최대 CPU 제한
-              memory: 512Mi  # 최대 메모리 제한
+              memory: 1Gi  # 최대 메모리 제한
       affinity:  # Pod 안티-어피니티 적용 (같은 노드에 붙지 않게)
         podAntiAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
