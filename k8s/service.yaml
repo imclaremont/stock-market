@@ -7,6 +7,6 @@ spec:
     app: sk029-stock-market
   ports:
     - protocol: TCP
-      port: 8080
-      targetPort: 8080
+      port: 8085
+      targetPort: 8085
   type: ClusterIP

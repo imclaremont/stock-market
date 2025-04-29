@@ -23,6 +23,6 @@ spec:
         - name: sk029-stock-market
           image: amdp-registry.skala-ai.com/skala25a/sk029-stock-market:1.0.0
           ports:
-            - containerPort: 8080
+            - containerPort: 8085
       imagePullSecrets:
         - name: regcred
