@@ -21,7 +21,7 @@ spec:
           effect: "NoSchedule"
       containers:
         - name: sk029-stock-market
-          image: amdp-registry.skala-ai.com/skala25a/sk029-stock-market:1.0.0
+          image: amdp-registry.skala-ai.com/skala25a/sk029-stock-market:1.0.0@sha256:b17d26f7148537f17b67f0729cfe3b36cb32a112704fa240ca71c4a44502761e
           ports:
             - containerPort: 8085
       imagePullSecrets:
