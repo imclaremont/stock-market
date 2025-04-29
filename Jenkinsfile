@@ -40,7 +40,19 @@ pipeline {
         stage('Deploy to Kubernetes') {
             steps {
                 sh '''
-                    kubectl apply -f ./k8s
+                    # 1. Ingress 먼저 삭제 (존재하지 않아도 무시)
+                    kubectl delete -f k8s/ingress.yaml --ignore-not-found
+                    
+                    # 2. 기본 리소스 배포
+                    kubectl apply -f k8s/deployment.yaml
+                    kubectl apply -f k8s/service.yaml
+                    kubectl apply -f k8s/configmap.yaml
+                    kubectl apply -f k8s/hpa.yaml
+                    
+                    # 3. Ingress 마지막에 배포
+                    kubectl apply -f k8s/ingress.yaml
+                    
+                    # 4. 배포 상태 확인
                     kubectl rollout status deployment/sk029-stock-market-deployment
                 '''
             }
