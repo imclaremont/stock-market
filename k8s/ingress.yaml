@@ -16,4 +16,4 @@ spec:
               service:
                 name: stock-market
                 port:
-                  number: 8080
+                  number: 8085
