@@ -1,5 +1,5 @@
-# 베이스 이미지 (ARM용 OpenJDK Base Image)
-FROM arm64v8/openjdk:17-jdk
+# 베이스 이미지
+FROM openjdk:17-jdk-slim
 
 # 작업 디렉토리 생성
 WORKDIR /app
