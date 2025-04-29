@@ -40,10 +40,8 @@ pipeline {
         stage('Deploy to Kubernetes') {
             steps {
                 sh '''
-                    kubectl apply -f ./k8s/deployment.yaml
-                    kubectl apply -f ./k8s/service.yaml
                     kubectl apply -f ./k8s
-                    kubectl rollout status deployment/sk029-stock-market
+                    kubectl rollout status deployment/stock-market-deployment
                 '''
             }
         }
