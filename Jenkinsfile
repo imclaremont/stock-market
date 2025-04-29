@@ -41,7 +41,7 @@ pipeline {
             steps {
                 sh '''
                     kubectl apply -f ./k8s
-                    kubectl rollout status deployment/stock-market-deployment
+                    kubectl rollout status deployment/sk029-stock-market-deployment
                 '''
             }
         }
